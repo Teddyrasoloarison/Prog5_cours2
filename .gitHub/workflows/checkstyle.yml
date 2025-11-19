@@ -1,29 +1,65 @@
-name: Java CI
+name: "Checkstyle Java"
+description: "Configuration Checkstyle pour assurer la qualité et la convention de code Java."
 
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+version: "1.0"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+checkstyle:
+  # Chemin vers les fichiers à analyser
+  sourceDirectories:
+    - "src/main/java"
+    - "src/test/java"
 
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 # Fetches all history for all branches and tags
+  # Règles à appliquer
+  rules:
+    # Indentation
+    Indentation:
+      severity: warning
+      basicOffset: 4
+      tabWidth: 4
+      caseIndent: 4
+      lineWrappingIndentation: 8
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: 'maven' # or 'gradle' if using Gradle
+    # Longueur de ligne
+    LineLength:
+      severity: warning
+      max: 120
 
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml # or 'gradle build' for Gradle
+    # Nom des classes
+    ClassName:
+      severity: error
+      format: "^[A-Z][a-zA-Z0-9]*$"
 
-    - name: Run Tests
-      run: mvn test --file pom.xml # or 'gradle test' for Gradle
+    # Nom des méthodes
+    MethodName:
+      severity: error
+      format: "^[a-z][a-zA-Z0-9]*$"
+
+    # Nom des variables
+    LocalVariableName:
+      severity: warning
+      format: "^[a-z][a-zA-Z0-9]*$"
+
+    # Espaces avant/accolades
+    LeftCurly:
+      severity: warning
+      option: "eol" # accolade ouvrante en fin de ligne
+
+    # Commentaires obligatoires pour les classes publiques
+    JavadocType:
+      severity: warning
+      scope: "public"
+
+    # Vérifier les imports inutilisés
+    UnusedImports:
+      severity: error
+
+    # Vérifier la documentation des méthodes publiques
+    JavadocMethod:
+      severity: warning
+      scope: "public"
+
+  # Fichiers à exclure
+  exclude:
+    - "**/generated/**"
+    - "**/resources/**"
+    - "**/build/**"
